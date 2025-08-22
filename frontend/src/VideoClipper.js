@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './VideoClipper.css';
+const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
 const VideoClipper = () => {
     const [url, setUrl] = useState('');
@@ -22,7 +23,9 @@ const VideoClipper = () => {
             if (type === 'audio') {
                 payload.audioFormat = audioFormat;
             }
-            const response = await axios.post(`http://localhost:5000/${endpoint}`, payload);
+            // const SERVER_URL_1 = "http://localhost:5000/";
+            // const SERVER_URL_2 = "http://192.168.1.5:5000/";
+            const response = await axios.post(`${SERVER_URL}/${endpoint}`, payload);
             setDownloadUrl(response.data.downloadUrl);
         } catch (error) {
             console.error('Error downloading video/audio:', error);
