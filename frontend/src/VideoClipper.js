@@ -9,6 +9,7 @@ const VideoClipper = () => {
     const [downloadUrl, setDownloadUrl] = useState('');
     const [loading, setLoading] = useState(false);
     const [type, setType] = useState('audio'); // 'audio' or 'video'
+    const [audioFormat, setAudioFormat] = useState('mp3');
 
     const handleDownload = async (e) => {
         e.preventDefault();
@@ -17,11 +18,11 @@ const VideoClipper = () => {
 
         try {
             const endpoint = type === 'video' ? 'download-video' : 'download-audio-only';
-            const response = await axios.post(`http://localhost:5000/${endpoint}`, {
-                url,
-                startTime,
-                endTime,
-            });
+            const payload = { url, startTime, endTime };
+            if (type === 'audio') {
+                payload.audioFormat = audioFormat;
+            }
+            const response = await axios.post(`http://localhost:5000/${endpoint}`, payload);
             setDownloadUrl(response.data.downloadUrl);
         } catch (error) {
             console.error('Error downloading video/audio:', error);
@@ -87,6 +88,16 @@ const VideoClipper = () => {
                         </label>
                     </div>
                 </div>
+
+                {type === 'audio' && (
+                    <div className="form-group">
+                        <label>Select Audio Format:</label>
+                        <select value={audioFormat} onChange={(e) => setAudioFormat(e.target.value)}>
+                            <option value="mp3">MP3</option>
+                            <option value="m4a">M4A</option>
+                        </select>
+                    </div>
+                )}
 
                 <button type="submit" className="submit-btn" disabled={loading}>
                     {loading
