@@ -7,18 +7,26 @@ const VideoClipper = () => {
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
     const [downloadUrl, setDownloadUrl] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [type, setType] = useState('audio'); // 'audio' or 'video'
 
     const handleDownload = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setDownloadUrl('');
+
         try {
-            const response = await axios.post('http://localhost:5000/download', {
+            const endpoint = type === 'video' ? 'download-video' : 'download-audio-only';
+            const response = await axios.post(`http://localhost:5000/${endpoint}`, {
                 url,
                 startTime,
                 endTime,
             });
             setDownloadUrl(response.data.downloadUrl);
         } catch (error) {
-            console.error('Error downloading video:', error);
+            console.error('Error downloading video/audio:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -35,6 +43,7 @@ const VideoClipper = () => {
                         required
                     />
                 </div>
+
                 <div className="form-group">
                     <label>Start Time (seconds):</label>
                     <input
@@ -44,6 +53,7 @@ const VideoClipper = () => {
                         required
                     />
                 </div>
+
                 <div className="form-group">
                     <label>End Time (seconds):</label>
                     <input
@@ -53,20 +63,59 @@ const VideoClipper = () => {
                         required
                     />
                 </div>
-                <button type="submit" className="submit-btn">
-                    Download and Clip Video
+
+                <div className="form-group">
+                    <label>Select Output Type:</label>
+                    <div className="radio-group">
+                        <label>
+                            <input
+                                type="radio"
+                                value="audio"
+                                checked={type === 'audio'}
+                                onChange={() => setType('audio')}
+                            />
+                            Audio Only
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                value="video"
+                                checked={type === 'video'}
+                                onChange={() => setType('video')}
+                            />
+                            Video + Audio
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" className="submit-btn" disabled={loading}>
+                    {loading
+                        ? type === 'video'
+                            ? 'Processing Video...'
+                            : 'Processing Audio...'
+                        : type === 'video'
+                        ? 'Download Video + Audio'
+                        : 'Download Audio Only'}
                 </button>
             </form>
-            {downloadUrl && (
+
+            {loading && (
+                <div className="loader-container">
+                    <div className="loader"></div>
+                    <p>{type === 'video' ? 'Clipping video...' : 'Clipping audio...'} Please wait...</p>
+                </div>
+            )}
+
+            {downloadUrl && !loading && (
                 <div className="download-section">
-                    <h2>Download your video here:</h2>
+                    <h2>Download your {type === 'video' ? 'video' : 'audio'} here:</h2>
                     <a
                         href={downloadUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="download-link"
                     >
-                        Download Video
+                        Download {type === 'video' ? 'Video + Audio' : 'Audio Only'}
                     </a>
                 </div>
             )}

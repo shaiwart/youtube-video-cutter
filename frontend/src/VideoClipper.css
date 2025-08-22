@@ -92,3 +92,84 @@
 .download-link:hover {
   background: #059669;
 }
+
+
+/* Loader container */
+.loader-container {
+  margin-top: 20px;
+  text-align: center;
+  color: #374151;
+}
+
+/* Spinner animation */
+.loader {
+  margin: 0 auto 10px;
+  border: 4px solid #f3f4f6;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+}
+
+/* Spin keyframes */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+
+/* VideoClipper.css */
+
+/* Radio group container */
+.radio-group {
+  display: flex;
+  gap: 20px;
+  /* space between radio buttons */
+  margin-top: 8px;
+}
+
+/* Individual radio labels */
+.radio-group label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Add spacing between radio button and text */
+.radio-group input[type="radio"] {
+  margin-right: 8px;
+  accent-color: #007bff;
+  /* custom color for radio button */
+}
+
+/* Hover effect for labels */
+.radio-group label:hover {
+  background-color: #f0f8ff;
+  border-color: #007bff;
+}
+
+/* Checked radio label style */
+.radio-group input[type="radio"]:checked+span,
+.radio-group input[type="radio"]:checked {
+  font-weight: 600;
+  color: #007bff;
+  border-color: #007bff;
+}
+
+/* Optional: make label change background when selected */
+.radio-group input[type="radio"]:checked~label {
+  background-color: #e6f0ff;
+}
