@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import axios from 'axios';
 import './VideoClipper.css';
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
+const LOCAL_STORAGE_KEY = 'last_10_links';
 
 const VideoClipper = () => {
     const [url, setUrl] = useState('');
@@ -11,6 +12,30 @@ const VideoClipper = () => {
     const [loading, setLoading] = useState(false);
     const [type, setType] = useState('audio'); // 'audio' or 'video'
     const [audioFormat, setAudioFormat] = useState('mp3');
+    const [savedLinks, setSavedLinks] = useState([]);
+
+    // Load saved links on component mount
+    useEffect(() => {
+        const storedLinks = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+        setSavedLinks(storedLinks);
+    }, []);
+
+    // Save the current url to localStorage and state
+    const saveLink = (newUrl) => {
+        if (!newUrl.trim()) return;
+
+        setSavedLinks(prevLinks => {
+        // Remove if already exists to avoid duplicates
+        const deduped = prevLinks.filter(link => link !== newUrl);
+
+        // Add new link at front
+        const updated = [newUrl, ...deduped].slice(0, 10);
+
+        // Update localStorage
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+        return updated;
+        });
+    };
 
     const handleDownload = async (e) => {
         e.preventDefault();
@@ -27,6 +52,9 @@ const VideoClipper = () => {
             // const SERVER_URL_2 = "http://192.168.1.5:5000/";
             const response = await axios.post(`${SERVER_URL}/${endpoint}`, payload);
             setDownloadUrl(response.data.downloadUrl);
+
+            // Save current URL on successful download
+            saveLink(url);
         } catch (error) {
             console.error('Error downloading video/audio:', error);
         } finally {
@@ -119,6 +147,23 @@ const VideoClipper = () => {
                     <p>{type === 'video' ? 'Clipping video...' : 'Clipping audio...'} Please wait...</p>
                 </div>
             )}
+
+            <div className="saved-links">
+                <h3>Last 10 Links</h3>
+                <ul>
+                {savedLinks.map((link, idx) => (
+                    <li key={idx}>
+                    <button
+                        type="button"
+                        className="saved-link-button"
+                        onClick={() => setUrl(link)}
+                    >
+                        {link}
+                    </button>
+                    </li>
+                ))}
+                </ul>
+            </div>
 
             {downloadUrl && !loading && (
                 <div className="download-section">
