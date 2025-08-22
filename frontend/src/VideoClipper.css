@@ -1,0 +1,94 @@
+/* Container */
+.video-clipper {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #f9fafb;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+/* Heading */
+.video-clipper h1 {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+  color: #2c3e50;
+}
+
+/* Form styles */
+.video-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.form-group input {
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border: 1px solid #3b82f6;
+  box-shadow: 0 0 4px rgba(59, 130, 246, 0.4);
+}
+
+/* Button */
+.submit-btn {
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+  background: #2563eb;
+}
+
+/* Download link section */
+.download-section {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.download-section h2 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.download-link {
+  display: inline-block;
+  padding: 10px 18px;
+  background: #10b981;
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.download-link:hover {
+  background: #059669;
+}

@@ -1,3 +1,8 @@
 node_modules
 dist
 release
+
+# ignore directories which contain video/audio files
+input
+output
+merged-videos

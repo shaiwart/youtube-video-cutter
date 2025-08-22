@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './VideoClipper.css';
 
 const VideoClipper = () => {
     const [url, setUrl] = useState('');
@@ -22,10 +23,10 @@ const VideoClipper = () => {
     };
 
     return (
-        <div>
+        <div className="video-clipper">
             <h1>YouTube Video Clipper</h1>
-            <form onSubmit={handleDownload}>
-                <div>
+            <form className="video-form" onSubmit={handleDownload}>
+                <div className="form-group">
                     <label>Video URL:</label>
                     <input
                         type="text"
@@ -34,7 +35,7 @@ const VideoClipper = () => {
                         required
                     />
                 </div>
-                <div>
+                <div className="form-group">
                     <label>Start Time (seconds):</label>
                     <input
                         type="number"
@@ -43,7 +44,7 @@ const VideoClipper = () => {
                         required
                     />
                 </div>
-                <div>
+                <div className="form-group">
                     <label>End Time (seconds):</label>
                     <input
                         type="number"
@@ -52,13 +53,20 @@ const VideoClipper = () => {
                         required
                     />
                 </div>
-                <button type="submit">Download and Clip Video</button>
+                <button type="submit" className="submit-btn">
+                    Download and Clip Video
+                </button>
             </form>
             {downloadUrl && (
-                <div>
+                <div className="download-section">
                     <h2>Download your video here:</h2>
-                    <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
-                        {downloadUrl}
+                    <a
+                        href={downloadUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="download-link"
+                    >
+                        Download Video
                     </a>
                 </div>
             )}
