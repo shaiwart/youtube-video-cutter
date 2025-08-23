@@ -8,6 +8,13 @@ import youtubedl from 'youtube-dl-exec';
 import cors from 'cors';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
+import dotenv from 'dotenv';
+dotenv.config();
+
+// server url
+console.log("URL: ", process.env.SERVER_URL);
+
+const SERVER_URL = process.env.SERVER_URL || 'http://localhost:5000';
 
 // __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -174,7 +181,7 @@ app.post('/download-video', async (req, res) => {
 		const outputFilePath = path.join(__dirname, "output", outputFileName);
 
 		if (fs.existsSync(outputFilePath)) {
-			return res.json({ downloadUrl: `http://localhost:5000/output/${outputFileName}` });
+			return res.json({ downloadUrl: `${SERVER_URL}/output/${outputFileName}` });
 		}
 
 		const videoFilePath = await downloadVideo(url);
@@ -190,7 +197,7 @@ app.post('/download-video', async (req, res) => {
 		console.log("... Cutting started ...");
 		await cutVideo(mergedVideoPath, outputFilePath, startTime, endTime);
 
-		res.json({ downloadUrl: `http://localhost:5000/output/${outputFileName}` });
+		res.json({ downloadUrl: `${SERVER_URL}/output/${outputFileName}` });
 
 	} catch (error) {
 		console.error(`Error in /download: ${error.message}`);
@@ -214,7 +221,7 @@ app.post('/download-audio-only', async (req, res) => {
 		const outputFilePath = path.join(__dirname, "output", outputFileName);
 
 		if (fs.existsSync(outputFilePath)) {
-			return res.json({ downloadUrl: `http://localhost:5000/output/${outputFileName}` });
+			return res.json({ downloadUrl: `${SERVER_URL}/output/${outputFileName}` });
 		}
 
 		const audioFilePath = await downloadAudio(url, audioFormat);
@@ -222,7 +229,7 @@ app.post('/download-audio-only', async (req, res) => {
 		console.log("... Cutting audio ...");
 		await cutAudio(audioFilePath, outputFilePath, startTime, endTime, audioFormat);
 
-		res.json({ downloadUrl: `http://localhost:5000/output/${outputFileName}` });
+		res.json({ downloadUrl: `${SERVER_URL}/output/${outputFileName}` });
 
 	} catch (error) {
 		console.error(`Error in /download-audio: ${error.message}`);
@@ -234,7 +241,7 @@ app.post('/download-audio-only', async (req, res) => {
 app.use(express.static(__dirname));
 
 const PORT = 5000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
 	console.log(`🚀 Server running on http://localhost:${PORT}`);
 	console.log(`🎥 POST /download (video+audio)`);
 	console.log(`🎵 POST /download-audio (audio only)`);
