@@ -4,6 +4,18 @@ import './VideoClipper.css';
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 const LOCAL_STORAGE_KEY = 'last_10_links';
 
+// Helper to fetch video title from YouTube oEmbed API
+const fetchYouTubeTitle = async (videoUrl) => {
+  try {
+    const res = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(videoUrl)}&format=json`);
+    if (!res.ok) throw new Error('Could not fetch video title');
+    const data = await res.json();
+    return data.title;
+  } catch (err) {
+    return ''; // fallback if fetch fails
+  }
+};
+
 const VideoClipper = () => {
     const [url, setUrl] = useState('');
     const [startTime, setStartTime] = useState('');
@@ -12,28 +24,57 @@ const VideoClipper = () => {
     const [loading, setLoading] = useState(false);
     const [type, setType] = useState('audio'); // 'audio' or 'video'
     const [audioFormat, setAudioFormat] = useState('mp3');
-    const [savedLinks, setSavedLinks] = useState([]);
+    const [savedVideos, setSavedVideos] = useState([]);
+    const [currentVideoTitle, setCurrentVideoTitle] = useState('');
+    const [fetchingTitle, setFetchingTitle] = useState(false);
+
 
     // Load saved links on component mount
     useEffect(() => {
-        const storedLinks = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
-        setSavedLinks(storedLinks);
+        const stored = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+        setSavedVideos(stored);
     }, []);
 
-    // Save the current url to localStorage and state
-    const saveLink = (newUrl) => {
-        if (!newUrl.trim()) return;
+    useEffect(() => {
+        // Avoid fetching if empty or non-youtube URL
+        if (!url || !/^https?:\/\/(www\.)?youtube\.com|youtu\.be/.test(url)) {
+            setCurrentVideoTitle('');
+            return;
+        }
 
-        setSavedLinks(prevLinks => {
-        // Remove if already exists to avoid duplicates
-        const deduped = prevLinks.filter(link => link !== newUrl);
+        let cancelled = false;
+        setFetchingTitle(true);
 
-        // Add new link at front
-        const updated = [newUrl, ...deduped].slice(0, 10);
+        fetchYouTubeTitle(url)
+            .then(title => {
+                if (!cancelled) setCurrentVideoTitle(title);
+            })
+            .catch(() => {
+                if (!cancelled) setCurrentVideoTitle('');
+            })
+            .finally(() => {
+                if (!cancelled) setFetchingTitle(false);
+            });
 
-        // Update localStorage
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
-        return updated;
+        return () => { cancelled = true; };
+    }, [url]);
+
+
+    const saveVideo = async (videoUrl) => {
+        if (!videoUrl.trim()) return;
+
+        const title = await fetchYouTubeTitle(videoUrl);
+
+        setSavedVideos(prevVideos => {
+            // Remove duplicates by url
+            const filtered = prevVideos.filter(item => item.url !== videoUrl);
+
+            // Add new link at front
+            const updated = [{ title, url: videoUrl }, ...filtered].slice(0, 10);
+
+            // Update localStorage
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+            return updated;
         });
     };
 
@@ -48,13 +89,11 @@ const VideoClipper = () => {
             if (type === 'audio') {
                 payload.audioFormat = audioFormat;
             }
-            // const SERVER_URL_1 = "http://localhost:5000/";
-            // const SERVER_URL_2 = "http://192.168.1.5:5000/";
             const response = await axios.post(`${SERVER_URL}/${endpoint}`, payload);
             setDownloadUrl(response.data.downloadUrl);
 
             // Save current URL on successful download
-            saveLink(url);
+            await saveVideo(url);
         } catch (error) {
             console.error('Error downloading video/audio:', error);
         } finally {
@@ -75,6 +114,18 @@ const VideoClipper = () => {
                         required
                     />
                 </div>
+
+                { url && (
+                <div className="video-title-preview">
+                    {fetchingTitle
+                    ? <span>Fetching video title...</span>
+                    : currentVideoTitle
+                        ? <span>Video Title: <strong>{currentVideoTitle}</strong></span>
+                        : <span style={{color:'#888'}}>No title found or invalid link.</span>
+                    }
+                </div>
+                )}
+
 
                 <div className="form-group">
                     <label>Start Time (seconds):</label>
@@ -148,23 +199,6 @@ const VideoClipper = () => {
                 </div>
             )}
 
-            <div className="saved-links">
-                <h3>Last 10 Links</h3>
-                <ul>
-                {savedLinks.map((link, idx) => (
-                    <li key={idx}>
-                    <button
-                        type="button"
-                        className="saved-link-button"
-                        onClick={() => setUrl(link)}
-                    >
-                        {link}
-                    </button>
-                    </li>
-                ))}
-                </ul>
-            </div>
-
             {downloadUrl && !loading && (
                 <div className="download-section">
                     <h2>Download your {type === 'video' ? 'video' : 'audio'} here:</h2>
@@ -178,6 +212,36 @@ const VideoClipper = () => {
                     </a>
                 </div>
             )}
+
+            <div className="saved-videos">
+                <h3>Last 10 Videos</h3>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Video Title</th>
+                        <th>Video Link</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {savedVideos.map((item, idx) => (
+                        <tr key={idx}>
+                        <td>{item.title || 'Unknown'}</td>
+                        <td>
+                            <button
+                                type="button"
+                                className="saved-link-button"
+                                onClick={() => setUrl(item.url)}
+                                title={item.url}
+                            >
+                            Paste URL
+                            </button>
+                        </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     );
 };
