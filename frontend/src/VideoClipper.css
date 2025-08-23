@@ -92,3 +92,178 @@
 .download-link:hover {
   background: #059669;
 }
+
+
+/* Loader container */
+.loader-container {
+  margin-top: 20px;
+  text-align: center;
+  color: #374151;
+}
+
+/* Spinner animation */
+.loader {
+  margin: 0 auto 10px;
+  border: 4px solid #f3f4f6;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+}
+
+/* Spin keyframes */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+
+/* VideoClipper.css */
+
+/* Radio group container */
+.radio-group {
+  display: flex;
+  gap: 20px;
+  /* space between radio buttons */
+  margin-top: 8px;
+}
+
+/* Individual radio labels */
+.radio-group label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Add spacing between radio button and text */
+.radio-group input[type="radio"] {
+  margin-right: 8px;
+  accent-color: #007bff;
+  /* custom color for radio button */
+}
+
+/* Hover effect for labels */
+.radio-group label:hover {
+  background-color: #f0f8ff;
+  border-color: #007bff;
+}
+
+/* Checked radio label style */
+.radio-group input[type="radio"]:checked+span,
+.radio-group input[type="radio"]:checked {
+  font-weight: 600;
+  color: #007bff;
+  border-color: #007bff;
+}
+
+/* Optional: make label change background when selected */
+.radio-group input[type="radio"]:checked~label {
+  background-color: #e6f0ff;
+}
+
+/* --- SAVED VIDEO LINKS */
+.saved-videos {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  max-width: 700px;
+}
+
+.saved-videos h3 {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  color: #2c3e50;
+  letter-spacing: 0.02em;
+}
+
+.saved-videos table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.98rem;
+}
+
+.saved-videos th,
+.saved-videos td {
+  padding: 0.5rem 0.8rem;
+  border: 1px solid #e0e0e0;
+  text-align: left;
+}
+
+.saved-videos thead th {
+  background: #1e66da;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.saved-videos tr:nth-child(even) {
+  background: #f7faff;
+}
+
+.saved-link-button {
+  background: #edf6ff;
+  border: none;
+  color: #1e66da;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 1rem;
+  border-radius: 3px;
+  padding: 0.2rem 0.4rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.saved-link-button:hover {
+  background: #dbeafe;
+  color: #103e7d;
+}
+
+/* Responsive: stack table on small screens */
+@media (max-width: 620px) {
+  .saved-videos {
+    padding: 0.5rem;
+    max-width: 100%;
+  }
+
+  .saved-videos table,
+  .saved-videos thead,
+  .saved-videos tbody,
+  .saved-videos th,
+  .saved-videos td,
+  .saved-videos tr {
+    display: block;
+    width: 100%;
+  }
+
+  .saved-videos thead {
+    display: none;
+  }
+
+  .saved-videos td {
+    border: none;
+    padding: 0.75rem 0.2rem;
+    position: relative;
+  }
+
+  .saved-videos td:before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #1e66da;
+    display: block;
+    margin-bottom: 0.1rem;
+  }
+}
