@@ -59,6 +59,18 @@ const VideoClipper = () => {
         return () => { cancelled = true; };
     }, [url]);
 
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const setMainUrl = (url) => {
+        scrollToTop();
+
+        // adding delay just to show something is happening
+        setTimeout(() => {
+            setUrl(url);
+        }, 500);
+    };
 
     const saveVideo = async (videoUrl) => {
         if (!videoUrl.trim()) return;
@@ -230,10 +242,10 @@ const VideoClipper = () => {
                             <button
                                 type="button"
                                 className="saved-link-button"
-                                onClick={() => setUrl(item.url)}
+                                onClick={() => setMainUrl(item.url)}
                                 title={item.url}
                             >
-                            Paste URL
+                            Use URL
                             </button>
                         </td>
                         </tr>
